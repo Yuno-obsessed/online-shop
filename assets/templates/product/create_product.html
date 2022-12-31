@@ -1,0 +1,46 @@
+{{template "base" .}}
+
+{{define "title"}}New Product{{end}}
+
+{{define "main"}}
+
+<h2 class="new_product_header">Creating a new product:</h2>
+<form class="new_product" action="/create_product" method="POST" novalidate>
+    <div>
+    <div>
+        {{ with .Errors.Name }}
+        <p class="error">{{ . }}</p>
+        {{end}}
+        
+        <label for="name">Product name:</label><br>
+        <input type="text" id="name" name="name" value="{{ .Name }}" placeholder="Laptop" required><br><br>
+    </div>
+
+    <div>
+        {{ with .Errors.Description }}
+        <p class="error">{{ . }}</p>
+        {{end}}
+        <label for="description">Product description:</label><br>
+        <textarea class="new_product_description" name="description" id="description" rows="8" cols="20" placeholder="New MSI high-quality laptop for gaming with top-level characteristics" required>{{ .Description }}</textarea><br><br>
+    </div>
+        
+    <div>
+        {{ with .Errors.Price }}
+        <p class="error">{{ . }}</p>
+        {{end}}
+        <label for="price">Product price(1pcs,€):</label><br>
+        <input type="text" name="price" id="price" value="{{ .Price }}" placeholder="1199.99" required><br><br>
+    </div>
+
+    <div>
+        {{ with .Errors.Quantity }}
+        <p class="error">{{ . }}</p>
+        {{end}}
+        <label for="quantity">Product quantity:</label><br>
+        <input type="text" name="quantity" id="quantity" value="{{ .Quantity }}" placeholder="1" required><br>
+    </div>
+        <input type="submit" value="Submit" height="40" width="40">
+        </div>
+    </form>
+
+{{end}}

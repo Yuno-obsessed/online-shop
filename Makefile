@@ -2,7 +2,7 @@
 include .env
 export
 migrateup:
-	migrate -path db/migration -database "mysql://root:library-watcher@tcp(127.0.0.1:3306)/library" -verbose up
+	migrate -path db/migration -database "mysql://root:zusammen-network@tcp(127.0.0.1:3306)/zusammen" -verbose up
 
 migratedown:
-	migrate -path db/migration -database "mysql://root:library-watcher@tcp(127.0.0.1:3306)/library" -verbose down
+	migrate -path db/migration -database "mysql://root:zusammen-network@tcp(127.0.0.1:3306)/zusammen" -verbose down

@@ -2,55 +2,56 @@ package interaction
 
 import (
 	"github.com/gin-gonic/gin"
-	"log"
-	"net/http"
-	"regexp"
-	"zusammen/internal/domain/entity"
 )
 
 type UserInt struct {
 	Errors map[string]string
+	TmplPath string
 }
 
 func NewUserInt() *UserInt {
 	return &UserInt{
 		Errors: map[string]string{},
+		TmplPath: "../../assets/templates/user/",
 	}
 }
 
 var _ UserInteraction = &UserInt{}
 
-func (ui *UserInt) Validate(user entity.User) bool {
-	ui.Errors = make(map[string]string)
-	reg := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-	match := reg.Match([]byte(user.Email))
-	if !match {
-		ui.Errors["Email"] = "Please provide a valid email address"
+// Prolly I can take away map from struct
+
+func (ui *UserInt) Form(c *gin.Context, action string) {
+	if action == "login" {
+		RenderTemplate(c, ui.TmplPath + "account_login.html", nil)
 	}
-	if user.Password == "" {
-		ui.Errors["Password"] = "Please enter a password"
+	if action == "register" {
+		RenderTemplate(c, ui.TmplPath + "account_register.html", nil)
 	}
-	return len(ui.Errors) == 0
 }
 
-func (ui *UserInt) Send(c *gin.Context) {
-	resp := entity.User{
-		Email:    c.PostForm("email"),
-		Password: c.PostForm("password"),
-	}
-
-	if !ui.Validate(resp) {
-		log.Println(ui.Errors)
-		RenderTemplate(c, "../../assets/templates/account_login", resp)
+func (ui *UserInt) FormErrors(c *gin.Context, action string, errors map[string]string) {
+	ui.Errors = errors
+	if action == "register" {
+		RenderTemplate(c, ui.TmplPath + "account_register.html", ui.Errors)
 		return
 	}
-	http.Redirect(c.Writer, c.Request, "/account/page", 303)
+	if action == "login" {
+		RenderTemplate(c, ui.TmplPath + "account_login.html", ui.Errors)
+		return
+	}
 }
 
-func (ui *UserInt) Info(c *gin.Context) {
-	RenderTemplate(c, "../../assets/templates/account_login", nil)
+func (ui *UserInt) Success(c *gin.Context, action string) {
+	if action == "register"{
+		RenderTemplate(c, ui.TmplPath + "success_register.html",nil)
+		return
+	}
+	if action == "login" {
+		RenderTemplate(c, ui.TmplPath + "success_register.html", nil)
+		return
+	}
 }
 
-//func (ui *UserInteraction) GetInfo() any {
-//	return &entity.User{}
-//}
+func (ui *UserInt) NotFound(c *gin.Context){
+	RenderTemplate(c, ui.TmplPath + "user_not_found.html", nil)
+}

@@ -30,7 +30,6 @@ func (pr *Product) PostProduct(c *gin.Context) {
 	//	c.JSON(401, "unauthorized")
 	//	return
 	//}
-	postProductErrors := make(map[string]string)
 	if c.Request.Method == "GET" {
 		pr.productInt.Info(c)
 		return
@@ -49,17 +48,18 @@ func (pr *Product) PostProduct(c *gin.Context) {
 		UpdatedAt:   time.Now(),
 	}
 
-	postProductErrors = emptyProduct.Validate("")
+	postProductErrors := emptyProduct.Validate()
 	if len(postProductErrors) > 0 {
-		c.JSON(422, postProductErrors)
+		pr.productInt.Send(c, postProductErrors)
 		return
 	}
-	postProduct, postErr := pr.productApp.PostProduct(&emptyProduct)
+	_, postErr := pr.productApp.PostProduct(&emptyProduct)
 	if postErr != nil {
 		c.JSON(500, postErr)
 		return
 	}
-	c.JSON(201, postProduct)
+	//pr.productInt.Send(c, postErr)
+	pr.productInt.Respond(c)
 }
 
 func (pr *Product) GetProduct(c *gin.Context) {

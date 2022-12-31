@@ -40,7 +40,6 @@ func (t *Token) GenerateToken(userId uuid.UUID) (*TokenDetails, error) {
 
 	td := &TokenDetails{}
 	td.AtExpires = time.Now().Add(time.Minute * 60).Unix()
-	td.TokenUuid = uuid.NewV4().String()
 
 	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
 	td.RefreshUuid = td.TokenUuid + "++" + id

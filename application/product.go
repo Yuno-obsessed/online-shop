@@ -13,14 +13,14 @@ type productApp struct {
 var _ ProductAppInterface = &productApp{}
 
 type ProductAppInterface interface {
-	PostProduct(product *entity.Product) (uuid.UUID, error)
+	PostProduct(product *entity.Product) (*entity.Product, map[string]string)
 	GetProduct(uuid uuid.UUID) (*entity.Product, error)
 	GetProducts(limit, offset int64) ([]entity.Product, error)
-	EditProduct(product *entity.Product, uuid uuid.UUID) (uuid.UUID, error)
+	EditProduct(product *entity.Product, uuid uuid.UUID) (*entity.Product, map[string]string)
 	DeleteProduct(uuid uuid.UUID) (uuid.UUID, error)
 }
 
-func (p *productApp) PostProduct(product *entity.Product) (uuid.UUID, error) {
+func (p *productApp) PostProduct(product *entity.Product) (*entity.Product, map[string]string) {
 	return p.pr.PostProduct(product)
 }
 
@@ -32,7 +32,7 @@ func (p *productApp) GetProducts(limit, offset int64) ([]entity.Product, error) 
 	return p.pr.GetProducts(limit, offset)
 }
 
-func (p *productApp) EditProduct(product *entity.Product, uuid uuid.UUID) (uuid.UUID, error) {
+func (p *productApp) EditProduct(product *entity.Product, uuid uuid.UUID) (*entity.Product, map[string]string) {
 	return p.pr.EditProduct(product, uuid)
 }
 

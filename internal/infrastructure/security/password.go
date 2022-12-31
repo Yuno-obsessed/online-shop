@@ -22,8 +22,13 @@ func VerifyPassword(hashedPassword, password string) error {
 }
 
 // CustomHash is a method which consists of password(plain string),
-// salt(unique string for every use, is randomly generated),
-// pepper(common indentifier for all users, if randomly generated).
+// salt(unique string for every user, is randomly generated),
+// pepper(common identifier for all users, is randomly generated).
+
+func GenerateSalt(nickname string) string {
+	salt := sha512.Sum512([]byte(nickname))
+	return string(salt[:])
+}
 
 func CustomHash(password string, salt string, iterations int) []byte {
 	iter := math.Pow(float64(2), float64(iterations))

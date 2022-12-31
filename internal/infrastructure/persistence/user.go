@@ -22,21 +22,25 @@ var _ repository.UserRepository = &UserRepo{}
 func (r *UserRepo) SaveUser(user *entity.User) (*entity.User, map[string]string) {
 	dbErrors := make(map[string]string)
 	userUuid := uuid.New()
-	query_email := `SELECT user_uuid FROM users WHERE email=?;`
-	duplicate_email := r.Conn.QueryRow(query_email, user.Email)
-	err := duplicate_email.Err()
+	// Check whether the email user filled in is already in use
+	queryEmail := `SELECT user_uuid FROM users WHERE email=?;`
+	duplicateEmail := r.Conn.QueryRow(queryEmail, user.Email)
+	err := duplicateEmail.Err()
 	if err != nil {
 		dbErrors["email_exists"] = "this email is already taken"
 	}
-	query_phone := `SELECT user_uuid FROM users WHERE phone=?;`
-	duplicate_phone := r.Conn.QueryRow(query_phone, user.Phone)
-	err = duplicate_phone.Err()
+	// Check whether the phone number user filled in is already in use
+	queryPhone := `SELECT user_uuid FROM users WHERE phone=?;`
+	duplicatePhone := r.Conn.QueryRow(queryPhone, user.Phone)
+	err = duplicatePhone.Err()
 	if err != nil {
 		dbErrors["phone_exists"] = "this phone number is already taken"
 	}
 	if dbErrors != nil {
 		return nil, dbErrors
 	}
+	// Hash the password before inserting it in database
+	user.Password = string(security.CustomHash(user.Password, user.Salt, 10))
 	query := `INSERT INTO users (user_uuid,first_name,last_name,nickname,age,email,phone,password,salt,created_at,updated_at)
 				VALUES (?,?,?,?,?,?,?,?,?,?);`
 	_, err = r.Conn.Exec(query, &userUuid, &user.FirstName, &user.LastName, &user.Nickname, &user.Age,

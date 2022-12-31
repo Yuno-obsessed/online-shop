@@ -21,28 +21,25 @@ type Product struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-func (p *Product) Validate(action string) map[string]string {
+func (p *Product) Validate() map[string]string {
 	errors := make(map[string]string)
-	switch action {
-	case "":
-		reg := regexp.MustCompile(`[a-zA-Z]*.`)
-		match := reg.Match([]byte(p.Name))
-		if !match {
-			errors["Name"] = "Please enter a valid product name"
-		}
-		if strings.TrimSpace(p.Description) == "" {
-			errors["Description"] = "Please enter a description"
-		}
-		reg = regexp.MustCompile(`^\d*\.\d{2}$`)
-		match = reg.Match([]byte(fmt.Sprintf("%v", p.Price)))
-		if !match {
-			errors["Price"] = "Please enter a valid price"
-		}
-		reg = regexp.MustCompile(`\d+`)
-		match = reg.Match([]byte(fmt.Sprintf("%v", p.Quantity)))
-		if !match {
-			errors["Quantity"] = "Please enter a valid quantity"
-		}
+	reg := regexp.MustCompile(`[a-zA-Z]*.`)
+	match := reg.Match([]byte(p.Name))
+	if !match {
+		errors["Name"] = "Please enter a valid product name"
+	}
+	if strings.TrimSpace(p.Description) == "" {
+		errors["Description"] = "Please enter a description"
+	}
+	reg = regexp.MustCompile(`^\d*\.\d{2}$`)
+	match = reg.Match([]byte(fmt.Sprintf("%v", p.Price)))
+	if !match {
+		errors["Price"] = "Please enter a valid price"
+	}
+	reg = regexp.MustCompile(`\d+`)
+	match = reg.Match([]byte(fmt.Sprintf("%v", p.Quantity)))
+	if !match {
+		errors["Quantity"] = "Please enter a valid quantity"
 	}
 	return errors
 }

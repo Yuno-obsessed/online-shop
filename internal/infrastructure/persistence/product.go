@@ -18,26 +18,28 @@ func NewProductRepository(conn *sql.DB) *ProductRepo {
 
 var _ repository.ProductRepository = &ProductRepo{}
 
-func (r *ProductRepo) PostProduct(p *entity.Product) (uuid.UUID, error) {
-	productUuid := uuid.New()
+func (r *ProductRepo) PostProduct(p *entity.Product) (*entity.Product, map[string]string) {
+	dbErr := make(map[string]string)
+	p.UUID = uuid.New()
+	// Inserting a product to DB
 	query := `INSERT INTO products (product_uuid, product_name,description,image,seller,price,quantity, likes, created_at, updated_at)
 				VALUES (?,?,?,?,?,?,?,?,?);`
-	_, err := r.Conn.Exec(query, productUuid, p.Name, p.Description, p.Image, p.Seller, p.Price, p.Quantity, p.Likes, p.CreatedAt, p.UpdatedAt)
+	_, err := r.Conn.Exec(query, p.UUID, p.Name, p.Description, p.Image, p.Seller, p.Price, p.Quantity, p.Likes, p.CreatedAt, p.UpdatedAt)
 	if err != nil {
-		return uuid.Nil, fmt.Errorf("error in query PostProduct %v", err)
+		dbErr["Error posting a product"] = "Error posting a product"
+		return nil, dbErr
 	}
+	// IDK, checking if the inserted uuid is right?
 	query = `SELECT product_uuid FROM products WHERE product_uuid=?;`
 
-	row := r.Conn.QueryRow(query, productUuid)
+	row := r.Conn.QueryRow(query, p.UUID)
 	var insertedUuid uuid.UUID
 	err = row.Scan(&insertedUuid)
-	if err != nil {
-		return uuid.Nil, fmt.Errorf("error in query PostProduct %v", err)
+	if err != nil || p.UUID != insertedUuid {
+		dbErr["uuid is wrong"] = "inserted uuid isn't right"
+		return nil, dbErr
 	}
-	if productUuid != insertedUuid {
-		return uuid.Nil, fmt.Errorf("uuid mismatch")
-	}
-	return insertedUuid, nil
+	return p, nil
 }
 
 func (r *ProductRepo) GetProduct(uuid uuid.UUID) (*entity.Product, error) {
@@ -55,6 +57,8 @@ func (r *ProductRepo) GetProduct(uuid uuid.UUID) (*entity.Product, error) {
 
 func (r *ProductRepo) GetProducts(limit, offset int64) ([]entity.Product, error) {
 	var resProducts []entity.Product
+	// OFFSET is a number after which goes querying up to LIMIT.
+	// LIMIT 5 OFFSET 2 (3-8)
 	query := `SELECT * FROM products LIMIT ? OFFSET ?;`
 	rows, err := r.Conn.Query(query, limit, offset)
 	err = rows.Err()
@@ -78,14 +82,16 @@ func (r *ProductRepo) GetProducts(limit, offset int64) ([]entity.Product, error)
 	return resProducts, nil
 }
 
-func (r *ProductRepo) EditProduct(p *entity.Product, productUuid uuid.UUID) (uuid.UUID, error) {
+func (r *ProductRepo) EditProduct(p *entity.Product, productUuid uuid.UUID) (*entity.Product, map[string]string) {
+	dbErr := make(map[string]string)
 	query := `UPDATE products SET product_name=?, description=?, image=?,
                     seller=?,price=?,quantity=?,likes=?,created_at=?,updated_at=?, WHERE product_uuid=?;`
 	_, err := r.Conn.Exec(query, p.Name, p.Description, p.Image, p.Seller, p.Price, p.Quantity, p.Likes, p.CreatedAt, p.UpdatedAt, productUuid)
 	if err != nil {
-		return uuid.Nil, fmt.Errorf("error in query EditProduct %v", err)
+		dbErr["error editing product"] = "error editing product"
+		return nil, dbErr
 	}
-	return productUuid, nil
+	return p, nil
 }
 
 func (r *ProductRepo) DeleteProduct(productUuid uuid.UUID) (uuid.UUID, error) {

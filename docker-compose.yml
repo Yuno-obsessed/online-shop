@@ -2,9 +2,11 @@ version: '3.9'
 services:
   mys:
     image: mysql:8.0
+    healthcheck:
+      test: mig
       # cap_add:
       # - SYS_NICE
-    restart: always
+    restart: on-failure
     environment:
       - MYSQL_DATABASE=zusammen
       - MYSQL_ROOT_PASSWORD=zusammen-network
@@ -12,25 +14,30 @@ services:
       - '3306:3306'
     volumes:
       - mys:/var/lib/mysql
+    networks:
+      - shop
   migrate:
     image: migrate/migrate
     restart: on-failure
 #    volumes:
 #      - ./migrations:/migrate
+    networks:
+      - shop
     command:
       [ "-database",  "mysql://root:zusammen-network@tcp(127.0.0.1:3306)/zusammen" , "-path", "internal/infrastructure/database/migration", "up" ]
-  redis:
-    image: "redis:alpine"
-    command: redis-server --requirepass root
-    ports:
-      - "6379:6379"
-    volumes:
-      - $PWD/redis-data:/var/lib/redis
-      - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
-    environment:
-      - REDIS_REPLICATION_MODE=master
+#  redis:
+#    image: "redis:latest"
+#    restart: on-failure
+#    command: redis-server --port 6379 --requirepass root
+#    ports:
+#      - "6379:6379"
+#    environment:
+#      - REDIS_REPLICATION_MODE=master
 volumes:
   mys:
     driver: local
-  redis:
-    driver: local
+#  redis:
+#    driver: local
+networks:
+  shop:
+    driver: "bridge"

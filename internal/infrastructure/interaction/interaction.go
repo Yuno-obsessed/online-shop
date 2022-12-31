@@ -5,19 +5,20 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"zusammen/internal/domain/entity"
 )
 
 type ProductInteraction interface {
-	Validate(product entity.Product) bool
-	Send(c *gin.Context)
-	Info(c *gin.Context)
+	Form(c *gin.Context)
+	FormErrors(c *gin.Context, errors map[string]string)
+	Success(c *gin.Context)
+	NotFound(c *gin.Context)
 }
 
 type UserInteraction interface {
-	Validate(user entity.User) bool
-	Send(c *gin.Context)
-	Info(c *gin.Context)
+	Form(c *gin.Context, action string)
+	FormErrors(c *gin.Context, action string, errors map[string]string)
+	Success(c *gin.Context, action string)
+	NotFound(c *gin.Context)
 }
 
 func RenderTemplate(c *gin.Context, filename string, data interface{}) {

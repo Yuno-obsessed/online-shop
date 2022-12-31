@@ -1,9 +1,11 @@
 package main
 
 import (
+	"crypto/sha512"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
+	"os"
 	"zusammen/internal/infrastructure/config"
 	"zusammen/internal/infrastructure/interaction"
 	"zusammen/internal/infrastructure/persistence"
@@ -11,6 +13,8 @@ import (
 )
 
 func main() {
+	pepper := sha512.New().Sum([]byte("pepper"))
+	os.Setenv("PEPPER", string(pepper))
 	dbConf := config.NewConfig().MySqlConfig()
 	router := gin.Default()
 	services, err := persistence.NewRepositories(dbConf)

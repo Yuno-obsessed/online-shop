@@ -14,7 +14,7 @@
         
         <label for="name">Product name:</label><br>
         <input type="text" id="name" name="name" value="{{ .Name }}" placeholder="Laptop" required><br><br>
-    </div>
+        </div>
 
     <div>
         {{ with .Errors.Description }}
@@ -22,15 +22,23 @@
         {{end}}
         <label for="description">Product description:</label><br>
         <textarea class="new_product_description" name="description" id="description" rows="8" cols="20" placeholder="New MSI high-quality laptop for gaming with top-level characteristics" required>{{ .Description }}</textarea><br><br>
-    </div>
-        
+        </div>
+
+        <div>
+        {{ with .Errors.Description }}
+            <p class = "error">{{ . }}</p>
+            {{end}}
+            <label for="category">Product category:</label><br>
+            <input class="text" id="category" name="category" value="{{ .Category }}" placeholder="electronics" required><br><br>
+        </div>
+
     <div>
         {{ with .Errors.Price }}
         <p class="error">{{ . }}</p>
         {{end}}
         <label for="price">Product price(1pcs,€):</label><br>
         <input type="text" name="price" id="price" value="{{ .Price }}" placeholder="1199.99" required><br><br>
-    </div>
+        </div>
 
     <div>
         {{ with .Errors.Quantity }}
@@ -38,7 +46,7 @@
         {{end}}
         <label for="quantity">Product quantity:</label><br>
         <input type="text" name="quantity" id="quantity" value="{{ .Quantity }}" placeholder="1" required><br>
-    </div>
+        </div>
         <input type="submit" value="Submit" height="40" width="40">
         </div>
     </form>

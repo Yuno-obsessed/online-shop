@@ -31,16 +31,18 @@ func (pr *Product) PostProduct(c *gin.Context) {
 	//	return
 	//}
 	if c.Request.Method == "GET" {
-		pr.productInt.Info(c)
+		pr.productInt.Form(c)
 		return
 	}
-	price, _ := strconv.ParseFloat(c.PostForm("price"), 32)
+	price, _ := strconv.Atoi(c.PostForm("price"))
 	quantity, _ := strconv.Atoi(c.PostForm("quantity"))
+	//category, _ := strconv.Atoi(c.PostForm("category"))
 	emptyProduct := entity.Product{
 		Name:        c.PostForm("name"),
 		Description: c.PostForm("description"),
 		Image:       "img",
-		Seller:      "some guy",
+		Category:    c.PostForm("category"),
+		Seller:      "seller",
 		Price:       price,
 		Quantity:    quantity,
 		Likes:       0,
@@ -50,7 +52,7 @@ func (pr *Product) PostProduct(c *gin.Context) {
 
 	postProductErrors := emptyProduct.Validate()
 	if len(postProductErrors) > 0 {
-		pr.productInt.Send(c, postProductErrors)
+		pr.productInt.FormErrors(c, postProductErrors)
 		return
 	}
 	_, postErr := pr.productApp.PostProduct(&emptyProduct)
@@ -58,24 +60,23 @@ func (pr *Product) PostProduct(c *gin.Context) {
 		c.JSON(500, postErr)
 		return
 	}
-	//pr.productInt.Send(c, postErr)
-	pr.productInt.Respond(c)
+	pr.productInt.Success(c)
 }
 
 func (pr *Product) GetProduct(c *gin.Context) {
-	pr.productInt.Info(c)
+	pr.productInt.Form(c)
 	urlUuid := c.Param("product_uuid")
 	productUuid, err := uuid.Parse(urlUuid)
 	if err != nil {
 		c.JSON(500, "invalid request")
 		return
 	}
-	product, err := pr.productApp.GetProduct(productUuid)
+	getProduct, err := pr.productApp.GetProduct(productUuid)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
-	c.JSON(200, product)
+	pr.productInt.Page(c, getProduct)
 }
 
 func (pr *Product) GetProducts(c *gin.Context) {
@@ -85,6 +86,7 @@ func (pr *Product) GetProducts(c *gin.Context) {
 		c.JSON(500, err.Error())
 		return
 	}
+	// change to uploading some page
 	c.JSON(200, products)
 }
 
@@ -96,20 +98,22 @@ func (pr *Product) UpdateProduct(c *gin.Context) {
 		c.JSON(500, "invalid request")
 		return
 	}
-	price, _ := strconv.ParseFloat(c.PostForm("new_price"), 32)
+	price, _ := strconv.Atoi(c.PostForm("new_price"))
 	quantity, _ := strconv.Atoi(c.PostForm("new_quantity"))
+	//category, _ := strconv.Atoi(c.PostForm("new_category"))
 	emptyProduct := &entity.Product{
 		UUID:        productUuid,
 		Name:        c.PostForm("new_name"),
 		Description: c.PostForm("new_description"),
+		Category:    c.PostForm("new_category"),
 		Image:       "Image",
-		Seller:      "some guy",
+		Seller:      "seller",
 		Price:       price,
 		Quantity:    quantity,
 		UpdatedAt:   time.Now(),
 	}
 
-	getProductErrors = emptyProduct.Validate("")
+	getProductErrors = emptyProduct.Validate()
 	if len(getProductErrors) > 0 {
 		c.JSON(422, getProductErrors)
 		return
@@ -119,7 +123,7 @@ func (pr *Product) UpdateProduct(c *gin.Context) {
 		c.JSON(500, updateErr)
 		return
 	}
-	c.JSON(201, postProduct)
+	pr.productInt.Page(c, postProduct)
 }
 
 func (pr *Product) DeleteProduct(c *gin.Context) {
@@ -134,5 +138,5 @@ func (pr *Product) DeleteProduct(c *gin.Context) {
 		c.JSON(500, deleteErr)
 		return
 	}
-	c.JSON(201, "success")
+	pr.productInt.Delete(c)
 }

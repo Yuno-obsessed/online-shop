@@ -10,6 +10,7 @@ type DatabaseConfig struct {
 	Driver   string
 	Username string
 	Password string
+	Host     string
 	Port     string
 	Database string
 }
@@ -33,9 +34,10 @@ func (c *Config) MySqlConfig() *DatabaseConfig {
 	return &DatabaseConfig{
 		Driver:   os.Getenv("MS_DRIVER"),
 		Username: os.Getenv("MS_USER"),
-		Password: os.Getenv("MS_PASSWORD"),
+		Password: os.Getenv("MYSQL_PASSWORD"),
+		Host:     os.Getenv("MYSQL_HOST"),
 		Port:     os.Getenv("MS_PORT"),
-		Database: os.Getenv("MS_NAME"),
+		Database: os.Getenv("MYSQL_DATABASE"),
 	}
 }
 

@@ -37,3 +37,11 @@ func main() {
 
 	log.Fatal(router.Run(":8080"))
 }
+
+// TODO
+// Add a dependency-injection to handlers to check if user is authorised, using jwt
+// Find out how to implement caching
+
+// TODO
+// 1) How to make user's uploaded photos come to minio and how to get them back
+// 2) Create minio middleware + jwt

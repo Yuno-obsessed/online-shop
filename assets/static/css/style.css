@@ -282,6 +282,14 @@ li a {
     background-color: #111111;
 }
 
+.success{
+    align-self: center;
+}
+
+.success_menu{
+    align-self: center;
+}
+
 /* .footer_bot_top {
     background-color: #17213c;
     padding: 35px 0;

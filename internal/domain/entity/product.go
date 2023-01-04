@@ -12,13 +12,15 @@ type Product struct {
 	UUID        uuid.UUID `json:"product_uuid"`
 	Name        string    `json:"product_name"`
 	Description string    `json:"description"`
+	Category    string    `json:"category"`
 	Image       string    `json:"image"`
-	Seller      string    `json:"seller"`
-	Price       float64   `json:"price"`
-	Quantity    int       `json:"quantity"`
-	Likes       int       `json:"likes"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	//Seller      uuid.UUID `json:"seller"`
+	Seller    string    `json:"seller"`
+	Price     int       `json:"price"`
+	Quantity  int       `json:"quantity"`
+	Likes     int       `json:"likes"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (p *Product) Validate() map[string]string {
@@ -31,7 +33,8 @@ func (p *Product) Validate() map[string]string {
 	if strings.TrimSpace(p.Description) == "" {
 		errors["Description"] = "Please enter a description"
 	}
-	reg = regexp.MustCompile(`^\d*\.\d{2}$`)
+	//reg = regexp.MustCompile("^\\d+(\\.\\d{0,2})$")
+	reg = regexp.MustCompile(`\d+`)
 	match = reg.Match([]byte(fmt.Sprintf("%v", p.Price)))
 	if !match {
 		errors["Price"] = "Please enter a valid price"

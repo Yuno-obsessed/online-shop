@@ -1,10 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{{template "base" .}}
 
-</body>
-</html>
+{{define "title"}} Success login{{end}}
+
+{{define "main"}}
+<div class="success_login">
+    <div class="success">
+        <br><br><br><h2>Your were logged in successfully!</h2>
+        <h3>Thank you for using our service!</h3><br>
+        </div>
+    <div class="success_menu">
+        <h4><a href="/">Home page</a></h4>
+        <h4><a href="/account/">Your account</a></h4>
+        <h4><a href="/categories">Categories</a></h4>
+        </div>
+</div>
+
+{{end}}

@@ -42,7 +42,7 @@ func (r *UserRepo) SaveUser(user *entity.User) (*entity.User, map[string]string)
 	// Hash the password before inserting it in database
 	user.Password = string(security.CustomHash(user.Password, user.Salt, 10))
 	query := `INSERT INTO users (user_uuid,first_name,last_name,nickname,age,email,phone,password,salt,created_at,updated_at)
-				VALUES (?,?,?,?,?,?,?,?,?,?);`
+				VALUES (?,?,?,?,?,?,?,?,?,?,?);`
 	_, err = r.Conn.Exec(query, &userUuid, &user.FirstName, &user.LastName, &user.Nickname, &user.Age,
 		&user.Email, &user.Phone, &user.Password, &user.Salt, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {

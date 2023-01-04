@@ -1,5 +1,9 @@
 package entity
 
+import "github.com/google/uuid"
+
 type Liked struct {
-	ID uint64
+	UUID        uuid.UUID
+	UserUUID    uuid.UUID
+	ProductUUID uuid.UUID
 }

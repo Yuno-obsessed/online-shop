@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"zusammen/internal/domain/entity"
 )
 
 type ProductInteraction interface {
@@ -12,6 +13,8 @@ type ProductInteraction interface {
 	FormErrors(c *gin.Context, errors map[string]string)
 	Success(c *gin.Context)
 	NotFound(c *gin.Context)
+	Page(c *gin.Context, product *entity.Product)
+	Delete(c *gin.Context)
 }
 
 type UserInteraction interface {
@@ -19,6 +22,7 @@ type UserInteraction interface {
 	FormErrors(c *gin.Context, action string, errors map[string]string)
 	Success(c *gin.Context, action string)
 	NotFound(c *gin.Context)
+	Page(c *gin.Context, user *entity.User)
 }
 
 func RenderTemplate(c *gin.Context, filename string, data interface{}) {

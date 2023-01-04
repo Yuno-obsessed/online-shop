@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"zusammen/internal/domain/repository"
 	"zusammen/internal/infrastructure/config"
+	"zusammen/internal/interfaces"
 )
 
 type Repositories struct {
 	Product repository.ProductRepository
 	User    repository.UserRepository
 	Db      *sql.DB
+	Fu interfaces.FileUploadInterface
 }
 
 func NewRepositories(config *config.DatabaseConfig) (*Repositories, error) {
@@ -30,9 +32,11 @@ func NewRepositories(config *config.DatabaseConfig) (*Repositories, error) {
 		Product: NewProductRepository(conn),
 		User:    NewUserRepository(conn),
 		Db:      conn,
+		Fu: interfaces.NewFileUpload(),
 	}, nil
 }
 
 func (r *Repositories) Close() error {
 	return r.Db.Close()
 }
+

@@ -33,6 +33,14 @@ services:
       - '3306:3306'
     volumes:
       - mys:/var/lib/mysql
+  redis:
+    image: redis:latest
+    command: redis-server --requirepass wordpass
+    expose:
+      - "6379"
+    volumes:
+      - redis-data:/data
+      - redis-conf:/usr/local/etc/redis/redis.conf
   migrate:
     restart: on-failure
     image: migrate/migrate
@@ -43,16 +51,33 @@ services:
       - ./internal/infrastructure/database/migration:/migration
     command:
       [ "-path", "/migration", "-database", "mysql://root:zusammen-network@tcp(mys)/zusammen", "up","1" ]
+  app:
+#    healthcheck:
+#      test: wget --spider http://localhost:8080/healthcheck
+#      interval: 1m
+    depends_on:
+      mys:
+        condition: service_started
+      redis:
+        condition: service_started
+      migrate:
+        condition: service_completed_successfully
+    build:
+      dockerfile: Dockerfile
+#    volumes:
+#      - "app-logs:/logs"
+#
+#    command:
+#        - "-log=/logs/log.txt"
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
 volumes:
   mys:
-#  redis:
-#    image: "redis:latest"
-#    restart: on-failure
-#    command: redis-server --port 6379 --requirepass root
-#    ports:
-#      - "6379:6379"
-#    environment:
-#      - REDIS_REPLICATION_MODE=master
+  redis-data:
+  redis-conf:
+#  app-logs:
 
   #    healthcheck:
   #      test: "/usr/bin/mysql --user=root --password=zusammen-network --execute \"SHOW DATABASES;\""

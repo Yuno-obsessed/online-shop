@@ -2,41 +2,27 @@ package persistence
 
 import (
 	"database/sql"
-	"fmt"
 	"zusammen/internal/domain/repository"
-	"zusammen/internal/infrastructure/config"
-	"zusammen/internal/interfaces"
 )
 
 type Repositories struct {
 	Product repository.ProductRepository
 	User    repository.UserRepository
+	Cart    repository.CartRepository
+	Liked   repository.LikedRepository
 	Db      *sql.DB
-	Fu interfaces.FileUploadInterface
 }
 
-func NewRepositories(config *config.DatabaseConfig) (*Repositories, error) {
-	conn, err := sql.Open(config.Driver, fmt.Sprintf(
-		"%s:%s@tcp(127.0.0.1:%s)/%s",
-		config.Username,
-		config.Password,
-		config.Port,
-		config.Database))
-	if err != nil {
-		return nil, err
-	}
-	if err := conn.Ping(); err != nil {
-		return nil, err
-	}
+func NewRepositories(conn *sql.DB) (*Repositories, error) {
 	return &Repositories{
 		Product: NewProductRepository(conn),
 		User:    NewUserRepository(conn),
+		Cart:    NewCartRepo(conn),
+		Liked:   NewLikedRepo(conn),
 		Db:      conn,
-		Fu: interfaces.NewFileUpload(),
 	}, nil
 }
 
 func (r *Repositories) Close() error {
 	return r.Db.Close()
 }
-

@@ -27,7 +27,7 @@ func NewConfig() *Config {
 }
 
 func (c *Config) MySqlConfig() *DatabaseConfig {
-	err := godotenv.Load("../../.env")
+	err := godotenv.Load("../.env")
 	if err != nil {
 		log.Println(err)
 	}

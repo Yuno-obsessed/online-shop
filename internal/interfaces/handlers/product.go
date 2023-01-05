@@ -7,25 +7,30 @@ import (
 	"time"
 	"zusammen/application"
 	"zusammen/internal/domain/entity"
+	"zusammen/internal/infrastructure/auth"
 	"zusammen/internal/infrastructure/interaction"
+	"zusammen/internal/interfaces"
 )
 
 type Product struct {
 	productApp application.ProductAppInterface
 	productInt interaction.ProductInteraction
-	//token       auth.TokenInterface
+	fileUpload interfaces.FileUploadInterface
+	jwtToken   auth.JWT
 }
 
-func NewProduct(pApp application.ProductAppInterface, pInt interaction.ProductInteraction) *Product {
+func NewProduct(pApp application.ProductAppInterface, pInt interaction.ProductInteraction,
+	fu interfaces.FileUploadInterface, token auth.JWT) *Product {
 	return &Product{
 		productApp: pApp,
 		productInt: pInt,
-		//token:      token,
+		fileUpload: fu,
+		jwtToken:   token,
 	}
 }
 
 func (pr *Product) PostProduct(c *gin.Context) {
-	//tokendata, err := pr.token.ExtractTokenMetadata(c.Request)
+	//tokendata, err := pr.jwtToken.ValidateToken(c.Request.Header.Get("Authorization"))
 	//if err != nil {
 	//	c.JSON(401, "unauthorized")
 	//	return
@@ -36,13 +41,23 @@ func (pr *Product) PostProduct(c *gin.Context) {
 	}
 	price, _ := strconv.Atoi(c.PostForm("price"))
 	quantity, _ := strconv.Atoi(c.PostForm("quantity"))
+	imgName, err := c.FormFile("image")
+	if err != nil {
+		c.JSON(500, "invalid image")
+		return
+	}
+	image, err := pr.fileUpload.UploadFile(imgName)
+	if err != nil {
+		c.JSON(500, "invalid image")
+		return
+	}
 	//category, _ := strconv.Atoi(c.PostForm("category"))
 	emptyProduct := entity.Product{
 		Name:        c.PostForm("name"),
 		Description: c.PostForm("description"),
-		Image:       "img",
 		Category:    c.PostForm("category"),
 		Seller:      "seller",
+		Image:       image,
 		Price:       price,
 		Quantity:    quantity,
 		Likes:       0,
@@ -100,13 +115,23 @@ func (pr *Product) UpdateProduct(c *gin.Context) {
 	}
 	price, _ := strconv.Atoi(c.PostForm("new_price"))
 	quantity, _ := strconv.Atoi(c.PostForm("new_quantity"))
+	imgName, err := c.FormFile("new_image")
+	if err != nil {
+		c.JSON(500, "invalid image")
+		return
+	}
+	image, err := pr.fileUpload.UploadFile(imgName)
+	if err != nil {
+		c.JSON(500, "invalid image")
+		return
+	}
 	//category, _ := strconv.Atoi(c.PostForm("new_category"))
 	emptyProduct := &entity.Product{
 		UUID:        productUuid,
 		Name:        c.PostForm("new_name"),
 		Description: c.PostForm("new_description"),
 		Category:    c.PostForm("new_category"),
-		Image:       "Image",
+		Image:       image,
 		Seller:      "seller",
 		Price:       price,
 		Quantity:    quantity,

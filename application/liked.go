@@ -7,7 +7,7 @@ import (
 )
 
 type likedApp struct {
-	lr repository.Liked
+	lr repository.LikedRepository
 }
 
 type LikedAppInterface interface {

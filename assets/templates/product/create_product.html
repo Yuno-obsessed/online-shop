@@ -47,6 +47,14 @@
         <label for="quantity">Product quantity:</label><br>
         <input type="text" name="quantity" id="quantity" value="{{ .Quantity }}" placeholder="1" required><br>
         </div>
+
+    </div>
+        {{ with .Errors.Image }}
+        <p class="error">{{ . }}</p>
+        {{end}}
+        <label for="image">Product image:</label><br>
+        <input type="image" name="image" id="image" value="{{ .Image }}" required><br>
+        </div>
         <input type="submit" value="Submit" height="40" width="40">
         </div>
     </form>

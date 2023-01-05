@@ -2,22 +2,27 @@ package main
 
 import (
 	"crypto/sha512"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"os"
+	"zusammen/internal/infrastructure/auth"
 	"zusammen/internal/infrastructure/config"
 	"zusammen/internal/infrastructure/interaction"
 	"zusammen/internal/infrastructure/persistence"
+	"zusammen/internal/interfaces"
 	"zusammen/internal/interfaces/handlers"
 )
 
 func main() {
+	fmt.Println(os.Getenv("$PWD"))
 	pepper := sha512.New().Sum([]byte("pepper"))
 	os.Setenv("PEPPER", string(pepper))
 	dbConf := config.NewConfig().MySqlConfig()
 	router := gin.Default()
-	services, err := persistence.NewRepositories(dbConf)
+	services, err := persistence.NewRepositories(
+		config.NewMysqlConn(dbConf))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,7 +30,8 @@ func main() {
 	defer services.Close()
 
 	//userService := handlers.NewUsers()
-	productService := handlers.NewProduct(services.Product, interaction.NewProductInt())
+	productService := handlers.NewProduct(services.Product, interaction.NewProductInt(),
+		interfaces.NewFileUpload(), auth.JWT{Secret: os.Getenv("SECRET_JWT")})
 	//router.Use(middleware.CORS())
 
 	router.GET("/", interaction.HomeTemplate)
@@ -41,7 +47,3 @@ func main() {
 // TODO
 // Add a dependency-injection to handlers to check if user is authorised, using jwt
 // Find out how to implement caching
-
-// TODO
-// 1) How to make user's uploaded photos come to minio and how to get them back
-// 2) Create minio middleware + jwt

@@ -1,8 +1,8 @@
 # Initial stage: download modules
 FROM golang:1.19 as modules
 
-ADD ./go.mod ./go.sum /m/
-RUN cd /m && go mod download
+ADD ./go.mod ./go.sum /cmd/
+RUN cd /cmd && go mod download
 
 
 # Intermediate stage: Build the binary
@@ -17,14 +17,15 @@ WORKDIR /cmd
 # Build the binary with go build
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
     go build -ldflags '-s -w -extldflags "-static"' \
-    -o ./cmd ./cmd/online-shop/main.go
+    -o /bin/cmd ./cmd/online-shop/main.go
 
 # Final stage: Run the binary
 FROM alpine:latest as image
 
 # and finally the binary
 
-COPY --from=builder ./cmd /cmd
+COPY --from=builder /bin/cmd .
 EXPOSE 8080
+
 
 ENTRYPOINT [ "./cmd" ]

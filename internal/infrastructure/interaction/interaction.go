@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"zusammen/internal/domain/entity"
 )
 
@@ -27,8 +28,10 @@ type UserInteraction interface {
 
 func RenderTemplate(c *gin.Context, filename string, data interface{}) {
 	tmpl, err := template.ParseFiles(filename,
-		"../../assets/templates/base_layout.tmpl",
-		"../../assets/templates/base_footer_bot.tmpl",
+		//"../../assets/templates/base_layout.tmpl",
+		//"../../assets/templates/base_footer_bot.tmpl",
+		os.Getenv("TMPL_PATH")+"templates/base_layout.tmpl",
+		os.Getenv("TMPL_PATH")+"templates/base_footer_bot.tmpl",
 	)
 	if err != nil {
 		log.Println(err.Error())
@@ -45,5 +48,6 @@ func RenderTemplate(c *gin.Context, filename string, data interface{}) {
 // Should add some logic (get categories list) here
 
 func HomeTemplate(c *gin.Context) {
-	RenderTemplate(c, "../../assets/templates/home_page.html", nil)
+	//RenderTemplate(c, "../../assets/templates/home_page.html", nil)
+	RenderTemplate(c, os.Getenv("TMPL_PATH")+"templates/home_page.html", nil)
 }

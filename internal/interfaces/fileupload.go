@@ -2,13 +2,14 @@ package interfaces
 
 import (
 	"bytes"
+	"context"
 	"fmt"
-	"github.com/minio/minio-go"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
-	"path"
 	"strings"
 )
 
@@ -17,25 +18,27 @@ type fileUpload struct {
 	bucketName string
 }
 
-func NewFileUpload() *fileUpload {
-	client, err := minio.New("http://localhost:9000/",
-		os.Getenv("minio_secret_key"),
-		os.Getenv("minio_acess_key"),
-		true)
+func NewFileUpload(entity string) *fileUpload {
+	ctx := context.Background()
+	client, err := minio.New("minio:9000/", &minio.Options{
+		Creds:  credentials.NewStaticV4(os.Getenv("MINIO_ACCESS_KEY"), os.Getenv("MINIO_SECRET_KEY"), ""),
+		Secure: false,
+	})
 
 	if err != nil {
-		log.Fatalf("Failed to create a new minio client")
+		log.Fatalf("Failed to create a new minio client, %v", err)
 		return nil
 	}
-	bucketName := "zusammenStorage"
-	location := "eu-south-1"
-	exists, _ := client.BucketExists(bucketName)
+	bucketName := "zusammen.storage." + entity
+	location := "us-east-1"
+	exists, _ := client.BucketExists(ctx, bucketName)
 	if !exists {
-		err = client.MakeBucket(bucketName, location)
+		err = client.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: location})
 		if err != nil {
-			log.Fatalf("Failed to create a bucket %s", bucketName)
+			log.Fatalf("Failed to create a bucket %s, %v", bucketName, err)
 			return nil
 		}
+		fmt.Printf("Bucker %s was created successfully", bucketName)
 	}
 	return &fileUpload{client: client, bucketName: bucketName}
 }
@@ -47,6 +50,7 @@ type FileUploadInterface interface {
 }
 
 func (fu *fileUpload) UploadFile(file *multipart.FileHeader) (string, error) {
+	ctx := context.Background()
 	f, err := file.Open()
 	if err != nil {
 		return "", err
@@ -64,11 +68,11 @@ func (fu *fileUpload) UploadFile(file *multipart.FileHeader) (string, error) {
 	if !strings.HasPrefix(fileType, "image") {
 		return "", fmt.Errorf("The file format is not valid")
 	}
-	filePath := path.Ext(file.Filename) + file.Filename
+	filePath := file.Filename
 
 	fileBytes := bytes.NewReader(buffer)
 	userMetaData := map[string]string{"x-amz-acl": "public-read"}
-	_, err = fu.client.PutObject(fu.bucketName, filePath, fileBytes, size,
+	_, err = fu.client.PutObject(ctx, fu.bucketName, filePath, fileBytes, size,
 		minio.PutObjectOptions{ContentType: fileType, UserMetadata: userMetaData})
 	if err != nil {
 		return "", fmt.Errorf("Error putting object in bucket %v", err)
@@ -77,7 +81,8 @@ func (fu *fileUpload) UploadFile(file *multipart.FileHeader) (string, error) {
 }
 
 func (fu *fileUpload) ReplaceFile(file string, newFile *multipart.FileHeader) (string, error) {
-	obj, err := fu.client.GetObject(fu.bucketName, file, minio.GetObjectOptions{})
+	ctx := context.Background()
+	obj, err := fu.client.GetObject(ctx, fu.bucketName, file, minio.GetObjectOptions{})
 	if err != nil {
 		return "", fmt.Errorf("Error in getting object, %v", err)
 	}
@@ -103,11 +108,11 @@ func (fu *fileUpload) ReplaceFile(file string, newFile *multipart.FileHeader) (s
 	if !strings.HasPrefix(fileType, "image") {
 		return "", fmt.Errorf("The file format is not valid")
 	}
-	filePath := path.Ext(newFile.Filename) + newFile.Filename
+	filePath := newFile.Filename
 	fileBytes := bytes.NewReader(buffer)
 
 	userMetaData := map[string]string{"x-amz-acl": "public-read"}
-	_, err = fu.client.PutObject(fu.bucketName, filePath, fileBytes, size,
+	_, err = fu.client.PutObject(ctx, fu.bucketName, filePath, fileBytes, size,
 		minio.PutObjectOptions{ContentType: fileType, UserMetadata: userMetaData})
 	if err != nil {
 		return "", fmt.Errorf("Error putting object in bucket %v", err)
@@ -116,7 +121,8 @@ func (fu *fileUpload) ReplaceFile(file string, newFile *multipart.FileHeader) (s
 }
 
 func (fu *fileUpload) DeleteFile(file string) error {
-	err := fu.client.RemoveObject(fu.bucketName, file)
+	ctx := context.Background()
+	err := fu.client.RemoveObject(ctx, fu.bucketName, file, minio.RemoveObjectOptions{ForceDelete: true})
 	if err != nil {
 		return err
 	}

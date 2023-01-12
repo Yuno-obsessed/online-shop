@@ -2,6 +2,7 @@ package interaction
 
 import (
 	"github.com/gin-gonic/gin"
+	"os"
 	"zusammen/internal/domain/entity"
 )
 
@@ -12,8 +13,9 @@ type ProductInt struct {
 
 func NewProductInt() *ProductInt {
 	return &ProductInt{
-		Errors:   map[string]string{},
-		TmplPath: "../../assets/templates/product/",
+		Errors: map[string]string{},
+		//TmplPath: "../../assets/templates/product/",
+		TmplPath: os.Getenv("TMPL_PATH") + "templates/product/",
 	}
 }
 

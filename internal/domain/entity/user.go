@@ -4,7 +4,6 @@ import (
 	"github.com/google/uuid"
 	"regexp"
 	"strconv"
-	"time"
 )
 
 type User struct {
@@ -18,8 +17,8 @@ type User struct {
 	Password  string    `json:"password"`
 	Salt      string    `json:"salt"`
 	Purchases uint      `json:"purchases"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt string    `json:"created_at"`
+	UpdatedAt string    `json:"updated_at"`
 }
 
 func (u *User) Validate(action string, secondPassword string) map[string]string {

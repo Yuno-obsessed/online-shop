@@ -12,10 +12,10 @@
 
 ### TODO:
 
-- [ ] JWT integration
-- [ ] Dockerfile
+- [x] JWT integration
+- [x] Dockerfile
 - [ ] Extend Makefile
-- [ ] FileUpload (s3 storage)
+- [x] FileUpload (s3 storage)
 - [ ] CI/CD on my private server
 - [ ] Better UI?
 - [ ] Rich business logic (for now idk how exactly) (sales, buy 1+1=3, buy together?)

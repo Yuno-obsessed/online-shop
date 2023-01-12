@@ -1,8 +1,6 @@
 package config
 
 import (
-	"github.com/joho/godotenv"
-	"log"
 	"os"
 )
 
@@ -27,10 +25,10 @@ func NewConfig() *Config {
 }
 
 func (c *Config) MySqlConfig() *DatabaseConfig {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		log.Println(err)
-	}
+	//err := godotenv.Load("../../.env")
+	//if err != nil {
+	//	log.Println(err)
+	//}
 	return &DatabaseConfig{
 		Driver:   os.Getenv("MS_DRIVER"),
 		Username: os.Getenv("MS_USER"),
@@ -42,10 +40,10 @@ func (c *Config) MySqlConfig() *DatabaseConfig {
 }
 
 func (c *Config) PostgresConfig() *DatabaseConfig {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Println(err)
-	}
+	//err := godotenv.Load(".env")
+	//if err != nil {
+	//	log.Println(err)
+	//}
 	return &DatabaseConfig{
 		Driver:   os.Getenv("PS_DRIVER"),
 		Username: os.Getenv("PS_USER"),

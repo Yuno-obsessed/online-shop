@@ -5,7 +5,7 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="book-shop" />
     <orderEntry type="module" module-name="shop" />
+    <orderEntry type="module" module-name="manga-g" />
   </component>
 </module>

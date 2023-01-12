@@ -37,6 +37,7 @@ func (us *User) SaveUser(c *gin.Context) {
 	}
 	// Need to find some string to generate salt from
 	newUser := entity.User{
+		UUID:      uuid.New(),
 		FirstName: c.PostForm("firstname"),
 		LastName:  c.PostForm("lastname"),
 		Nickname:  nickname,
@@ -46,8 +47,8 @@ func (us *User) SaveUser(c *gin.Context) {
 		Password:  c.PostForm("password"),
 		Salt:      security.GenerateSalt(nickname),
 		Purchases: 0,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
+		UpdatedAt: time.Now().Format("2006-01-02 15:04:05"),
 	}
 	secondPassword := c.PostForm("repeatpassword")
 	saveUserErrors := newUser.Validate("register", secondPassword)
@@ -60,14 +61,14 @@ func (us *User) SaveUser(c *gin.Context) {
 		c.JSON(500, saveErr)
 		return
 	}
-	us.userInt.Success(c,"register")
+	us.userInt.Success(c, "register")
 }
 
 func (us *User) GetUser(c *gin.Context) {
 	// router.GET("/user/:uuid", GetUser)
 	urlUuid := c.Param("uuid")
-	userUuid,err := uuid.Parse(urlUuid)
-	if err != nil{
+	userUuid, err := uuid.Parse(urlUuid)
+	if err != nil {
 		// To check if uuid.Parse works correctly
 		c.JSON(500, nil)
 		return
@@ -77,28 +78,28 @@ func (us *User) GetUser(c *gin.Context) {
 		us.userInt.NotFound(c)
 		return
 	}
-	us.userInt.Success(c,"register")
+	us.userInt.Success(c, "register")
 }
 
 // Am not sure yet where/how to use it
-func (us *User) GetUsers(c *gin.Context){
+func (us *User) GetUsers(c *gin.Context) {
 
 }
 
-func (us *User) GetUserByEmailAndPassword(c *gin.Context){
-	if c.Request.Method == "GET"{
+func (us *User) GetUserByEmailAndPassword(c *gin.Context) {
+	if c.Request.Method == "GET" {
 		us.userInt.Form(c, "login")
 		return
 	}
 	loginUser := entity.User{
-		Email: c.PostForm("email"),
+		Email:    c.PostForm("email"),
 		Password: c.PostForm("password"),
 	}
 	_, logErrors := us.userApp.GetUserByEmailAndPassword(&loginUser)
-	if len(logErrors) > 0{
-		us.userInt.FormErrors(c,"login",logErrors)
+	if len(logErrors) > 0 {
+		us.userInt.FormErrors(c, "login", logErrors)
 		return
 	}
 
-	us.userInt.Success(c,"login")
+	us.userInt.Success(c, "login")
 }

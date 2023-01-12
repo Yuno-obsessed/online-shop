@@ -20,9 +20,14 @@ var _ repository.ProductRepository = &ProductRepo{}
 
 func (r *ProductRepo) PostProduct(p *entity.Product) (*entity.Product, map[string]string) {
 	dbErr := make(map[string]string)
-	p.UUID = uuid.New()
 	// Inserting a product to DB
-	query := `INSERT INTO products (product_uuid, product_name,description,category,image,seller,price,quantity, likes, created_at, updated_at)
+	//query := `SELECT * FROM products WHERE image=?;`
+	//row := r.Conn.QueryRow(query, &p.Image)
+	//if row != nil {
+	//	p.Image = "(1)" + p.Image
+	//}
+	fmt.Println(p)
+	query := `INSERT INTO products (product_uuid, product_name, description, category, image, seller, price, quantity, likes, created_at, updated_at)
 				VALUES (?,?,?,?,?,?,?,?,?,?,?);`
 	_, err := r.Conn.Exec(query, p.UUID, p.Name, p.Description, p.Category, p.Image, p.Seller, p.Price, p.Quantity, p.Likes, p.CreatedAt, p.UpdatedAt)
 	if err != nil {
@@ -76,7 +81,7 @@ func (r *ProductRepo) EditProduct(p *entity.Product, productUuid uuid.UUID) (*en
 	dbErr := make(map[string]string)
 	query := `UPDATE products SET product_name=?, description=?, category=?, image=?, 
                     seller=?,price=?,quantity=?,likes=?,created_at=?,updated_at=? WHERE product_uuid=?;`
-	_, err := r.Conn.Exec(query, p.Name, p.Description, p.Category, p.Image, p.Seller, p.Price, p.Quantity, p.Likes, p.CreatedAt, p.UpdatedAt, productUuid)
+	_, err := r.Conn.Exec(query, &p.Name, &p.Description, &p.Category, &p.Image, &p.Seller, &p.Price, &p.Quantity, &p.Likes, &p.CreatedAt, &p.UpdatedAt, &productUuid)
 	if err != nil {
 		dbErr["error editing product"] = err.Error()
 		return nil, dbErr

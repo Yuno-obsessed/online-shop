@@ -101,7 +101,7 @@ func (r *UserRepo) GetUserByEmailAndPassword(user *entity.User) (*entity.User, m
 		dbErrors["get_user_by_email"] = "no such user found"
 		return nil, dbErrors
 	}
-	err = security.VerifyHashedPassword(resUser, user.Password, 10)
+	err = security.VerifyHashedPassword(resUser.Password, user.Password, resUser.Salt, 10)
 	if err != nil {
 		dbErrors["incorrect_password"] = err.Error()
 		return nil, dbErrors

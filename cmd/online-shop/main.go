@@ -2,7 +2,6 @@ package main
 
 import (
 	"crypto/sha512"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
@@ -16,7 +15,6 @@ import (
 )
 
 func main() {
-	fmt.Println(os.Getenv("$PWD"))
 	pepper := sha512.New().Sum([]byte("pepper"))
 	os.Setenv("PEPPER", string(pepper))
 	dbConf := config.NewConfig().MySqlConfig()
@@ -31,11 +29,12 @@ func main() {
 
 	//userService := handlers.NewUsers()
 	productService := handlers.NewProduct(services.Product, interaction.NewProductInt(),
-		interfaces.NewFileUpload(), auth.JWT{Secret: os.Getenv("SECRET_JWT")})
+		interfaces.NewFileUpload("product"), auth.JWT{Secret: os.Getenv("SECRET_JWT")})
 	//router.Use(middleware.CORS())
 
 	router.GET("/", interaction.HomeTemplate)
-	router.StaticFS("/assets/static/", gin.Dir("../../assets/static/", false))
+	//router.StaticFS("/assets/static/", gin.Dir("../../assets/static/", false))
+	router.StaticFS("/assets/static/", gin.Dir(os.Getenv("TMPL_PATH")+"static/", false))
 	router.GET("/create_product", productService.PostProduct)
 	router.POST("/create_product", productService.PostProduct)
 	router.GET("/products", productService.GetProducts)

@@ -5,7 +5,6 @@ import (
 	"github.com/google/uuid"
 	"regexp"
 	"strings"
-	"time"
 )
 
 type Product struct {
@@ -15,12 +14,12 @@ type Product struct {
 	Category    string    `json:"category"`
 	Image       string    `json:"image"`
 	//Seller      uuid.UUID `json:"seller"`
-	Seller    string    `json:"seller"`
-	Price     int       `json:"price"`
-	Quantity  int       `json:"quantity"`
-	Likes     int       `json:"likes"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Seller    string `json:"seller"`
+	Price     int    `json:"price"`
+	Quantity  int    `json:"quantity"`
+	Likes     int    `json:"likes"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 func (p *Product) Validate() map[string]string {

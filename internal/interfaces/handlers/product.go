@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"strconv"
@@ -39,20 +40,27 @@ func (pr *Product) PostProduct(c *gin.Context) {
 		pr.productInt.Form(c)
 		return
 	}
-	price, _ := strconv.Atoi(c.PostForm("price"))
-	quantity, _ := strconv.Atoi(c.PostForm("quantity"))
+	price, err := strconv.Atoi(c.PostForm("price"))
+	if err != nil {
+		fmt.Println(err)
+	}
+	quantity, err := strconv.Atoi(c.PostForm("quantity"))
+	if err != nil {
+		fmt.Println(err)
+	}
 	imgName, err := c.FormFile("image")
 	if err != nil {
-		c.JSON(500, "invalid image")
+		c.JSON(500, fmt.Sprintf("invalid image, %v", err))
 		return
 	}
 	image, err := pr.fileUpload.UploadFile(imgName)
 	if err != nil {
-		c.JSON(500, "invalid image")
+		c.JSON(500, fmt.Sprintf("can't upload image, %v", err))
 		return
 	}
 	//category, _ := strconv.Atoi(c.PostForm("category"))
-	emptyProduct := entity.Product{
+	emptyProduct := &entity.Product{
+		UUID:        uuid.New(),
 		Name:        c.PostForm("name"),
 		Description: c.PostForm("description"),
 		Category:    c.PostForm("category"),
@@ -61,8 +69,8 @@ func (pr *Product) PostProduct(c *gin.Context) {
 		Price:       price,
 		Quantity:    quantity,
 		Likes:       0,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   time.Now().Format("2006-01-02 15:04:05"),
+		UpdatedAt:   time.Now().Format("2006-01-02 15:04:05"),
 	}
 
 	postProductErrors := emptyProduct.Validate()
@@ -70,7 +78,7 @@ func (pr *Product) PostProduct(c *gin.Context) {
 		pr.productInt.FormErrors(c, postProductErrors)
 		return
 	}
-	_, postErr := pr.productApp.PostProduct(&emptyProduct)
+	_, postErr := pr.productApp.PostProduct(emptyProduct)
 	if postErr != nil {
 		c.JSON(500, postErr)
 		return
@@ -135,7 +143,7 @@ func (pr *Product) UpdateProduct(c *gin.Context) {
 		Seller:      "seller",
 		Price:       price,
 		Quantity:    quantity,
-		UpdatedAt:   time.Now(),
+		UpdatedAt:   time.Now().Format("2006-01-02 15:04:05"),
 	}
 
 	getProductErrors = emptyProduct.Validate()

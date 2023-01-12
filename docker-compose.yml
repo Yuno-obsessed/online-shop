@@ -3,15 +3,15 @@ services:
 
   minio:
     image: quay.io/minio/minio:latest
-    command: server /data --console-address ":9001"
+    command: server --address ":9000" --console-address ":9001" /data
     env_file:
       - .env
     ports:
       - "9000:9000"
       - "9001:9001"
     environment:
-      - MINIO_ROOT_USER=admin
-      - MINIO_ROOT_PASSWORD=wordpass
+      - MINIO_ROOT_USER=zusammen
+      - MINIO_ROOT_PASSWORD=7A2kexYc7Zwnkp2
 #    healthcheck:
 #      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
 #      interval: 30s
@@ -64,6 +64,8 @@ services:
         condition: service_completed_successfully
     build:
       dockerfile: Dockerfile
+    volumes:
+      - ./assets:/assets
 #    volumes:
 #      - "app-logs:/logs"
 #
@@ -74,6 +76,7 @@ services:
     env_file:
       - .env
 volumes:
+  assets:
   mys:
   redis-data:
   redis-conf:

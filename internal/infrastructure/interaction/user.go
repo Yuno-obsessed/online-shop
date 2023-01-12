@@ -2,6 +2,7 @@ package interaction
 
 import (
 	"github.com/gin-gonic/gin"
+	"os"
 	"zusammen/internal/domain/entity"
 )
 
@@ -12,8 +13,9 @@ type UserInt struct {
 
 func NewUserInt() *UserInt {
 	return &UserInt{
-		Errors:   map[string]string{},
-		TmplPath: "../../assets/templates/user/",
+		Errors: map[string]string{},
+		//TmplPath: "../../assets/templates/user/",
+		TmplPath: os.Getenv("TMPL_PATH") + "templates/user/",
 	}
 }
 

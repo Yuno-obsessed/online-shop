@@ -7,11 +7,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"math"
 	"os"
-	"zusammen/internal/domain/entity"
 )
 
 // Hash is a method for passwordHashing with bcrypt, which is a
-//pretty good algorithm with changable number if interactions
+//pretty good algorithm with changeable number of interactions
 
 func Hash(password string) ([]byte, error) {
 	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -41,9 +40,9 @@ func CustomHash(password string, salt string, iterations int) []byte {
 	return finalHash[:]
 }
 
-func VerifyHashedPassword(user entity.User, password string, iterations int) error {
-	hashNew := CustomHash(password, user.Salt, iterations)
-	if !bytes.Equal(hashNew, []byte(user.Password)) {
+func VerifyHashedPassword(hashedPassword string, password string, salt string, iterations int) error {
+	hashNew := CustomHash(password, salt, iterations)
+	if !bytes.Equal(hashNew, []byte(hashedPassword)) {
 		return errors.New("Passwords do not match")
 	}
 	return nil

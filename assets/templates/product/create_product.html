@@ -5,7 +5,9 @@
 {{define "main"}}
 
 <h2 class="new_product_header">Creating a new product:</h2>
-<form class="new_product" action="/create_product" method="POST" novalidate>
+<form class="new_product" action="/create_product" method="POST" novalidate enctype="multipart/form-data">
+    <fieldset class="new_product">
+        <legend class="new_product">New Product:</legend>
     <div>
     <div>
         {{ with .Errors.Name }}
@@ -53,10 +55,11 @@
         <p class="error">{{ . }}</p>
         {{end}}
         <label for="image">Product image:</label><br>
-        <input type="image" name="image" id="image" value="{{ .Image }}" required><br>
+        <input type="file" name="image" id="image" value="{{ .Image }}" required><br>
         </div>
         <input type="submit" value="Submit" height="40" width="40">
         </div>
+    </fieldset>
     </form>
 
 {{end}}

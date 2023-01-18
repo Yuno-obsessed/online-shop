@@ -14,6 +14,7 @@ body {
     line-height: 1.5;
     background-color: #F1F3F6;
     color: #34495E;
+    min-height: 100%;
     overflow-y: scroll;
 }
 
@@ -22,9 +23,11 @@ header, nav, main, footer {
 }
 
 main {
-    margin-top: 54px;
-    margin-bottom: 54px;
-    min-height: calc(100vh - 345px);
+    /*margin-top: 54px;*/
+    /*margin-bottom: 54px;*/
+    background-color: #F1F3F6;
+    /*min-height: calc(100vh - 345px);*/
+    /*min-height: 100%;*/
     overflow: auto;
 }
 
@@ -33,7 +36,7 @@ h1 a {
     font-weight: bold;
     background-image: url('/assets/static/images/logo3.png');
     background-repeat: no-repeat;
-    background-position: 10px 0px;
+    background-position: 10px 0;
     display:inline-block;
     height: 70px;
     padding-left: 120px;
@@ -157,25 +160,11 @@ footer {
     text-align: center;
 }
 
-/* success_creating_product */
-
-.success_creating_product {
+.success_operation {
     text-align: center; 
     color: #e74c3c;
     font-weight: bold;
 }
-
-
-/* login */
-
-/* .login {
- text-align: center;
- color: #3498db;
- font-size: 14px;
-} */
-
-/* new_product */
-
 
 .new_product {
     display: flex;
@@ -200,6 +189,15 @@ footer {
 
   .new_product_description{
     text-align: center;
+  }
+
+  .new_product legend{
+      color: orange;
+      text-align: center;
+  }
+
+  fieldset{
+      border: 1px rebeccapurple solid;
   }
 
   .error {
@@ -232,17 +230,6 @@ footer {
     flex-direction: column;
     text-align: center;
   }
-  
-   /* .login_form input {
-    align-self: center;
-    text-align: center;
-    margin: 20px 0;
-  }
-
-  .login_header{
-    text-align: center;
-    font-weight: bold;
-  } */
 
   .login_div{
     margin-left: 150px;
@@ -274,23 +261,45 @@ li a {
     align-items: center;
 }
 
-.menu a{
+ .menu a{
    display:inline-block; 
 }
 
-.menu a:hover{
+ .menu a:hover{
     background-color: #111111;
 }
 
-.success{
+ .success{
     align-self: center;
 }
 
-.success_menu{
+ .success_menu{
     align-self: center;
 }
 
-.new_product legend{
-    color: orange;
-    text-align: center;
-}
+/* .register_user legend{*/
+/*    color: orange;*/
+/*    text-align: center;*/
+/*}*/
+
+/* .register_user {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    text-align: center;*/
+/*  }*/
+
+/*  .register_user input {*/
+/*    align-self: center;*/
+/*    text-align: center;*/
+/*    margin: 20px 0;*/
+/*  }*/
+
+/*  .register_user_header{*/
+/*    text-align: center;*/
+/*    font-weight: bold;*/
+/*  }*/
+
+/*.register_user legend{*/
+/*    color: orange;*/
+/*    text-align: center;*/
+/*}*/

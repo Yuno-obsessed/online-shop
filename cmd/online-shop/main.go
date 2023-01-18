@@ -24,25 +24,28 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//frontend,err := interaction.
 	defer services.Close()
 
-	//userService := handlers.NewUsers()
+	jwtService := auth.NewJWT()
+	userService := handlers.NewUser(services.User, interaction.NewUserInt(),
+		interfaces.NewFileUpload("user"), *jwtService)
 	productService := handlers.NewProduct(services.Product, interaction.NewProductInt(),
-		interfaces.NewFileUpload("product"), auth.JWT{Secret: os.Getenv("SECRET_JWT")})
+		interfaces.NewFileUpload("product"), *jwtService)
 	//router.Use(middleware.CORS())
 
 	router.GET("/", interaction.HomeTemplate)
 	//router.StaticFS("/assets/static/", gin.Dir("../../assets/static/", false))
 	router.StaticFS("/assets/static/", gin.Dir(os.Getenv("TMPL_PATH")+"static/", false))
-	router.GET("/create_product", productService.PostProduct)
-	router.POST("/create_product", productService.PostProduct)
-	router.GET("/products", productService.GetProducts)
-	router.GET("/products/product:id", productService.GetProduct)
+	//prods := router.Group("account/:/products/")
+	prods := router.Group("/products/")
+	prods.Use(jwtService.Authenticate())
+	prods.GET("create", productService.PostProduct)
+	prods.POST("create", productService.PostProduct)
+	prods.GET("products", productService.GetProducts)
+	prods.GET(":id", productService.GetProduct)
 
+	router.GET("/account/register", userService.SaveUser)
+	router.POST("/account/register", userService.SaveUser)
+	router.GET("/account/login", userService.GetUserByEmailAndPassword)
 	log.Fatal(router.Run(":8080"))
 }
-
-// TODO
-// Add a dependency-injection to handlers to check if user is authorised, using jwt
-// Find out how to implement caching

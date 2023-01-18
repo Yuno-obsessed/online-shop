@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -8,6 +9,7 @@ import (
 func TestJWT_GenerateToken(t *testing.T) {
 	jwt := JWT{Secret: "secret_key"}
 	token, err := jwt.GenerateToken("sanity_nil")
+	fmt.Println(token)
 	if err != nil {
 		t.Errorf("Error generating JWT, %v", err)
 	}

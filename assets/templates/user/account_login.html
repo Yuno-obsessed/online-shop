@@ -4,32 +4,35 @@
 
 {{define "main"}}
 
-<h2 class="login_header">Log in, please.</h2>
-    <form class="login_form" action="/account/login" method="POST" novalidate>
-        <div class="login_div">
-            <div>
-                {{ with .Errors.Email }}
-                <p class="error">{{ . }}</p>
-                {{end}}
+<h2 class="login_header"><br>Log in, please.</h2>
+<form class="login_form" action="/account/login" method="POST" novalidate>
+    <fieldset class="login_form">
+        <legend class="login_form"></legend>
+    <div>
+        <div>
+            {{ with .Errors.Email }}
+            <p class="error">{{ . }}</p>
+            {{end}}
 
-        <label for="email" >Your email:</label><br>
-        <input type="text" id="email" name="email" placeholder="example@gmail.com" ><br><br>
-            </div>
-
-            <div>
-                {{ with .Errors.Password }}
-                <p class="error">{{ . }}</p>
-                {{end}}
-
-        <label for="password" >Your password:</label><br>
-        <input type="password" id="password" name="password" placeholder="super_secret_phrase86" ><br>
+            <label for="email" >Your email:</label><br>
+            <input type="text" id="email" name="email" placeholder="example@gmail.com" ><br><br>
         </div>
 
-        <input type="submit" value="Submit"><br>
+        <div>
+            {{ with .Errors.Password }}
+            <p class="error">{{ . }}</p>
+            {{end}}
+
+            <label for="password" >Your password:</label><br>
+            <input type="password" id="password" name="password" placeholder="super_secret_phrase86" ><br>
         </div>
-    </form>
-    <footer>
-        <h4 class="login_footer"><a href="account/register/">Already have an account?</a></h4>
-    </footer>
+
+        <input type="submit" value="Submit" height="40" width="40"><br>
+    </div>
+    </fieldset>
+</form>
+<footer>
+    <h4 class="login_footer"><a href="/account/register/">Don't have an account?</a></h4>
+</footer>
 
 {{end}}

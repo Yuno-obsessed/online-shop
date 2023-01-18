@@ -26,7 +26,6 @@ func (r *ProductRepo) PostProduct(p *entity.Product) (*entity.Product, map[strin
 	//if row != nil {
 	//	p.Image = "(1)" + p.Image
 	//}
-	fmt.Println(p)
 	query := `INSERT INTO products (product_uuid, product_name, description, category, image, seller, price, quantity, likes, created_at, updated_at)
 				VALUES (?,?,?,?,?,?,?,?,?,?,?);`
 	_, err := r.Conn.Exec(query, p.UUID, p.Name, p.Description, p.Category, p.Image, p.Seller, p.Price, p.Quantity, p.Likes, p.CreatedAt, p.UpdatedAt)

@@ -53,7 +53,11 @@ func (pr *Product) PostProduct(c *gin.Context) {
 		c.JSON(500, fmt.Sprintf("invalid image, %v", err))
 		return
 	}
-	image, err := pr.fileUpload.UploadFile(imgName)
+	username, ok := c.Get("username")
+	if !ok {
+		c.JSON(500, fmt.Sprintf("invalid token metadata, %v", err))
+	}
+	image, err := pr.fileUpload.UploadFile(imgName, username.(string))
 	if err != nil {
 		c.JSON(500, fmt.Sprintf("can't upload image, %v", err))
 		return
@@ -114,6 +118,11 @@ func (pr *Product) GetProducts(c *gin.Context) {
 }
 
 func (pr *Product) UpdateProduct(c *gin.Context) {
+	//tokendata, err := pr.jwtToken.ValidateToken(c.Request.Header.Get("Authorization"))
+	//if err != nil {
+	//	c.JSON(401, "unauthorized")
+	//	return
+	//}
 	getProductErrors := make(map[string]string)
 	urlUuid := c.Param("product_uuid")
 	productUuid, err := uuid.Parse(urlUuid)
@@ -128,7 +137,12 @@ func (pr *Product) UpdateProduct(c *gin.Context) {
 		c.JSON(500, "invalid image")
 		return
 	}
-	image, err := pr.fileUpload.UploadFile(imgName)
+	username, ok := c.Get("username")
+	if !ok {
+		c.JSON(500, "Error getting username")
+		return
+	}
+	image, err := pr.fileUpload.UploadFile(imgName, username.(string))
 	if err != nil {
 		c.JSON(500, "invalid image")
 		return

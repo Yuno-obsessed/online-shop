@@ -50,7 +50,7 @@ func (ui *UserInt) Success(c *gin.Context, action string) {
 		return
 	}
 	if action == "login" {
-		RenderTemplate(c, ui.TmplPath+"success_register.html", nil)
+		RenderTemplate(c, ui.TmplPath+"success_login.html", nil)
 		return
 	}
 }

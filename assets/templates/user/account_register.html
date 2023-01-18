@@ -1,20 +1,97 @@
-<h1>Contact</h1>
-<form action="/assets/static" method="POST" novalidate>
-	<div>
-		{{ with .Errors.Email }}
-		<p class="error">{{ . }}</p>
-		{{ end }}
-		<p><label>Your email:</label></p>
-		<p><input type="email" name="email" value="{{ .Email }}"></p>
-	</div>
-	<div>
-		{{ with .Errors.Content }}
-		<p class="error" >{{ . }}</p>
-		{{ end }}
-		<p><label>Your message:</label></p>
-		<p><textarea name="content">{{ .Content }}</textarea></p>
-	</div>
-	<div>
-		<input type="submit" value="Send message">
-	</div>
+{{template "base" .}}
+
+{{define "title"}}Register{{end}}
+
+{{define "main"}}
+
+<h2 class="new_product_header"><br>Creating your account:</h2>
+<form class="new_product" action="/account/register" method="POST" novalidate enctype="multipart/form-data">
+    <fieldset>
+        <legend class="new_product">Register:</legend>
+        <div>
+            <div>
+                {{ with .Errors.FirstName }}
+                <p class="error">{{ . }}</p>
+                {{end}}
+
+                <label for="firstname">Your first name:</label><br>
+                <input type="text" id="firstname" name="firstname" value="{{ .FirstName }}" placeholder="Eren" required><br><br>
+            </div>
+
+            <div>
+                {{ with .Errors.LastName }}
+                <p class="error">{{ . }}</p>
+                {{end}}
+
+                <label for="lastname">Your last name:</label><br>
+                <input type="text" id="lastname" name="lastname" value="{{ .LastName }}" placeholder="Yeager" required><br><br>
+            </div>
+
+            <div>
+                {{ with .Errors.Nickname }}
+                <p class="error">{{ . }}</p>
+                {{end}}
+
+                <label for="nickname">Your nickname:</label><br>
+                <input type="text" name="nickname" id="nickname" value="{{ .Nickname }}" placeholder="Eren_is_cool25"><br><br>
+            </div>
+
+            <div>
+                {{ with .Errors.Age }}
+                <p class = "error">{{ . }}</p>
+                {{end}}
+
+                <label for="age">Your age:</label><br>
+                <input type="text" id="age" name="age" value="{{ .Age }}" placeholder="18" required><br><br>
+            </div>
+
+            <div>
+            {{ with .Errors.Email }}
+            <p class="error">{{ . }}</p>
+            {{end}}
+
+            <label for="email" >Your email:</label><br>
+            <input type="text" id="email" name="email" value="{{ .Email }}" placeholder="example@gmail.com" ><br><br>
+        </div>
+
+        <div>
+            {{ with .Errors.Password }}
+            <p class="error">{{ . }}</p>
+            {{end}}
+
+            <label for="password" >Your password:</label><br>
+            <input type="password" id="password" name="password" value="{{ .Password }}" placeholder="super_secret_phrase86" ><br><br>
+        </div>
+
+            <div>
+                {{ with .Errors.PasswordRepeat }}
+                <p class="error">{{ . }}</p>
+                {{end}}
+
+                <label for="repeat_password" >Repeat your password:</label><br>
+                <input type="password" id="repeat_password" name="repeat_password" value="{{ .PasswordRepeat }}" placeholder="super_secret_phrase86" ><br><br>
+            </div>
+
+            <div>
+                {{ with .Errors.Phone }}
+                <p class="error">{{ . }}</p>
+                {{end}}
+                <label for="phone">Your phone number:</label><br>
+                <input type="tel" name="phone" id="phone" value="{{ .Phone }}" placeholder="123-454-7890" required><br><br>
+            </div>
+
+            <div>
+            {{ with .Errors.Image }}
+            <p class="error">{{ . }}</p>
+            {{end}}
+            <label for="image">Your avatar:</label><br>
+            <input type="file" name="image" id="image" value="{{ .Image }}" required><br><br>
+            </div>
+            <input type="submit" value="Submit" height="40" width="40">
+         </div>
+    </fieldset>
 </form>
+<footer>
+    <h4 class="login_footer"><a href="/account/login">Already have an account?</a></h4>
+</footer>
+{{end}}

@@ -44,12 +44,12 @@ func NewFileUpload(entity string) *fileUpload {
 }
 
 type FileUploadInterface interface {
-	UploadFile(file *multipart.FileHeader) (string, error)
+	UploadFile(file *multipart.FileHeader, nickname string) (string, error)
 	ReplaceFile(file string, newFile *multipart.FileHeader) (string, error)
 	DeleteFile(file string) error
 }
 
-func (fu *fileUpload) UploadFile(file *multipart.FileHeader) (string, error) {
+func (fu *fileUpload) UploadFile(file *multipart.FileHeader, nickname string) (string, error) {
 	ctx := context.Background()
 	f, err := file.Open()
 	if err != nil {
@@ -68,7 +68,7 @@ func (fu *fileUpload) UploadFile(file *multipart.FileHeader) (string, error) {
 	if !strings.HasPrefix(fileType, "image") {
 		return "", fmt.Errorf("The file format is not valid")
 	}
-	filePath := file.Filename
+	filePath := file.Filename + nickname
 
 	fileBytes := bytes.NewReader(buffer)
 	userMetaData := map[string]string{"x-amz-acl": "public-read"}

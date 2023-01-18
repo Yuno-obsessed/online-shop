@@ -12,8 +12,9 @@ import (
 // Hash is a method for passwordHashing with bcrypt, which is a
 //pretty good algorithm with changeable number of interactions
 
-func Hash(password string) ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+func Hash(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(hash), err
 }
 
 func VerifyPassword(hashedPassword, password string) error {
@@ -24,9 +25,9 @@ func VerifyPassword(hashedPassword, password string) error {
 // salt(unique string for every user, is randomly generated),
 // pepper(common identifier for all users, is randomly generated).
 
-func GenerateSalt(nickname string) string {
+func GenerateSalt(nickname string) []byte {
 	salt := sha512.Sum512([]byte(nickname))
-	return string(salt[:])
+	return salt[:]
 }
 
 func CustomHash(password string, salt string, iterations int) []byte {

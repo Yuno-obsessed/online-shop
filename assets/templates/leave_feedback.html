@@ -1,0 +1,32 @@
+{{ template "base" .}}
+
+{{ define "title"}}New User{{end}}
+
+{{ define "main" }}
+
+<h1>Login</h1>
+<h2>Enter your account data.</h2>
+<form class="user_login" action="/account/login" method="POST" novalidate>
+	<fieldset class="user_login">
+		<legend class="user_login">Login data:</legend>
+	<div>
+		{{ with .Errors.Email }}
+		<p class="error">{{ . }}</p>
+		{{ end }}
+		<label for="email">Your email:</label>
+		<input type="email" id="email" name="email" value="{{ .Email }}" placeholder="example@mail.com" required><br>
+	</div>
+
+	<div>
+		{{ with .Errors.Content }}
+		<p class="error" >{{ . }}</p>
+		{{ end }}
+		<label for="content">Your message:</label>
+		<textarea class="user_login_content" id="content" name="content" rows="8" cols="20" placeholder="">{{ .Content }}</textarea>
+	</div>
+	<div>
+		<input type="submit" value="Submit" height="40" width="40">
+	</div>
+	</fieldset>
+</form>
+{{ end }}

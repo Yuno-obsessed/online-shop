@@ -143,5 +143,6 @@ go.work
 
 pkg/
 src/
+.idea
 
 .env
